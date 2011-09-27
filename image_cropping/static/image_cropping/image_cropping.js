@@ -38,6 +38,7 @@ $(function() {
       imageHeight: org_height,
       handles: true,
       instance: true,
+      onSelectChange: preview(min_width, min_height, org_width, org_height),
       onInit: update_selection($this),
       onSelectEnd: update_selection($this),
       cropping_allowed: (org_width > min_width) && (org_height > min_height)
@@ -62,17 +63,34 @@ $(function() {
     }
 
     $.extend(options, initial);
-
+    
+    
     // hide the input field, show image to crop instead
-    $this.hide().after($('<img>', {
+    var $full_image = $('<img>', {
       'id': image_id,
       'src': $image_input.data('thumbnail-url'),
       'style': options.cropping_allowed ? 'border:2px solid green' : 'border:2px solid red'
-    }));
+    });
+    $this.hide().after($full_image);
+
+     // inject preview image
+     var $preview_canvas = $('<div><img src="' + $full_image.attr('src') + '" /><div>');
+     $preview_canvas.css({float: 'right', 
+                          border: '1px solid black',
+                          position: 'relative', 
+                          overflow: 'hidden', 
+                          // TODO: better solution for small images
+                          width: (min_width / 3) + 'px',
+                          height: (min_height / 3) + 'px' 
+                         });
+    $full_image.after($preview_canvas); 
 
     $this.data('imgareaselect', $('#' + image_id).imgAreaSelect(options));
+
   });
 });
+
+
 
 function max_cropping(width, height, image_width, image_height) {
   var ratio = width/height;
@@ -110,7 +128,6 @@ function initial_cropping(val) {
 }
 
 function _update_selection(img, sel, $crop_field) {
-
   crop_indication(img, sel, $crop_field);
   $crop_field.val(new Array(
     sel.x1,
@@ -123,6 +140,29 @@ function _update_selection(img, sel, $crop_field) {
 function update_selection($crop_field) {
   return function(img, sel) { _update_selection(img, sel, $crop_field); };
 }
+
+function preview(min_width, min_height, org_width, org_height) {
+  return function(img, sel) { _preview(img, sel, min_width, min_height, org_width, org_height)};
+}
+
+function _preview(img, selection, min_width, min_height, org_width, org_height) { 
+    var $img = $(img);
+    $img.css("border", "2px solid blue");
+    // console.dir(selection);
+    
+    var scaleX = (min_width / 3) / (selection.width || 1); 
+    var scaleY = (min_height / 3) / (selection.height || 1); 
+
+    // get preview image
+    var $preview = $($img).next().children();
+    $preview.css({
+                 width: Math.round(scaleX * org_width) + 'px',
+                 height: Math.round(scaleY * org_height) + 'px',
+                 border: '1px solid orange',
+                 marginLeft: '-' + Math.round(scaleX * selection.x1) + 'px', 
+                 marginTop: '-' + Math.round(scaleY * selection.y1) + 'px' 
+                 });
+    }
 
 function crop_indication(img, sel,$crop_field) {
   var min_width = $crop_field.data("width");
