@@ -1,6 +1,10 @@
 $(function() {
   $('input.image-ratio').each(function() {
     var $this = $(this);
+
+    // display a preview of the actual selection
+    var show_preview = $this.data('show-preview');
+
     // find the image field corresponding to this cropping value
     // by stripping the last part of our id and appending the image field name
     var field = $this.attr('name').replace($this.data('my-name'), $this.data('image-field'));
@@ -38,10 +42,18 @@ $(function() {
       imageHeight: org_height,
       handles: true,
       instance: true,
-      onSelectChange: preview(min_width, min_height, org_width, org_height),
       onInit: update_selection($this),
       onSelectEnd: update_selection($this),
       cropping_allowed: (org_width > min_width) && (org_height > min_height)
+    }
+
+    // additonal options for preview
+    if (show_preview) {
+      var preview_options = {
+        onInit: preview(min_width, min_height, org_width, org_height),
+        onSelectChange: preview(min_width, min_height, org_width, org_height),
+      }
+      $.extend(options, preview_options);
     }
 
     // is the image bigger than the minimal cropping values?
@@ -73,6 +85,7 @@ $(function() {
     });
     $this.hide().after($full_image);
 
+    if (show_preview) {
      // inject preview image
      var $preview_canvas = $('<div><img src="' + $full_image.attr('src') + '" /><div>');
      $preview_canvas.css({float: 'right', 
@@ -84,13 +97,12 @@ $(function() {
                           height: (min_height / 3) + 'px' 
                          });
     $full_image.after($preview_canvas); 
+    }
 
     $this.data('imgareaselect', $('#' + image_id).imgAreaSelect(options));
 
   });
 });
-
-
 
 function max_cropping(width, height, image_width, image_height) {
   var ratio = width/height;
@@ -147,18 +159,14 @@ function preview(min_width, min_height, org_width, org_height) {
 
 function _preview(img, selection, min_width, min_height, org_width, org_height) { 
     var $img = $(img);
-    $img.css("border", "2px solid blue");
-    // console.dir(selection);
-    
     var scaleX = (min_width / 3) / (selection.width || 1); 
     var scaleY = (min_height / 3) / (selection.height || 1); 
 
     // get preview image
-    var $preview = $($img).next().children();
+    var $preview = $($img).next().children(":first");
     $preview.css({
                  width: Math.round(scaleX * org_width) + 'px',
                  height: Math.round(scaleY * org_height) + 'px',
-                 border: '1px solid orange',
                  marginLeft: '-' + Math.round(scaleX * selection.x1) + 'px', 
                  marginTop: '-' + Math.round(scaleY * selection.y1) + 'px' 
                  });

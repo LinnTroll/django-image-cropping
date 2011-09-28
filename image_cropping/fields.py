@@ -20,10 +20,11 @@ class ImageCropField(models.ImageField):
 
 
 class ImageRatioField(models.CharField):
-    def __init__(self, image_field, size, adapt_rotation=False):
+    def __init__(self, image_field, size, adapt_rotation=False, show_preview=False):
         self.width, self.height = size.split('x')
         self.image_field = image_field
         self.adapt_rotation = adapt_rotation
+        self.show_preview = show_preview
         super(ImageRatioField, self).__init__(max_length=255, blank=True)
 
     def formfield(self, *args, **kwargs):
@@ -33,6 +34,7 @@ class ImageRatioField(models.CharField):
             'data-image-field': self.image_field,
             'data-my-name': self.name,
             'data-adapt-rotation': str(self.adapt_rotation).lower(),
+            'data-show-preview': str(self.show_preview).lower(),
             'class': 'image-ratio',
         })
         return super(ImageRatioField, self).formfield(*args, **kwargs)
