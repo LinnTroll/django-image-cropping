@@ -9,8 +9,7 @@ is being displayed. Large images are presented in a small format, so even very b
 users or editors to upload images of any dimension. It presents a selection with a fixed aspect ratio so your users
 can't break the layout with oddly-sized images.
 
-It provides the necessary fields, widgets and a (`easy_thumbnails 
-<http://github.com/SmileyChris/easy-thumbnails>`_) thumbnail processor for displaying the 
+It provides the necessary fields, widgets and a (sorl.thumbnail) thumbnail processor for displaying the 
 cropped image in your templates. Also works with `FeinCMS <https://github.com/feincms/feincms>`_ content types!
 
 Screenshot: 
