@@ -15,7 +15,7 @@ setup(name = "django-image-cropping",
     packages = find_packages(),
     include_package_data=True,
     install_requires = [
-        'easy_thumbnails',
+        'sorl-thumbnail',
     ],
     classifiers = [
         'Development Status :: 4 - Beta',
