@@ -6,7 +6,7 @@ from django.db.models import get_model, ObjectDoesNotExist
 from django.contrib.admin.widgets import AdminFileWidget, ForeignKeyRawIdWidget
 from django.conf import settings
 
-from easy_thumbnails.files import get_thumbnailer
+from sorl.thumbnail import get_thumbnail
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +14,7 @@ ADMIN_THUMBNAIL_SIZE = getattr(settings, 'IMAGE_CROPPING_THUMB_SIZE', (300, 300)
 
 
 def thumbnail(image_path):
-    thumbnailer = get_thumbnailer(image_path)
-    thumbnail_options = {
-        'detail': True,
-        'size': ADMIN_THUMBNAIL_SIZE,
-    }
-    thumb = thumbnailer.get_thumbnail(thumbnail_options)
-    return thumb.url
+    return get_thumbnail(image_path, '%sx%s' % ADMIN_THUMBNAIL_SIZE).url
 
 
 def get_attrs(image, name):
