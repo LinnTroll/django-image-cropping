@@ -21,17 +21,14 @@ Installation
 
 #. Install django-image-cropping using pip. For example::
 
-    pip install django-image-cropping
+    pip install -e git+https://github.com/LinnTroll/django-image-cropping.git#egg=image-cropping
 
-#. Add ``easy_thumbnails`` and ``image_cropping`` to your INSTALLED_APPS. ``image_cropping`` is only required
+#. Add ``sorl.thumbnail`` and ``image_cropping`` to your INSTALLED_APPS. ``image_cropping`` is only required
    if you are using Django 1.3+ and ``contrib.staticfiles`` or want to use the ``image_cropping`` templatetag.
 
-#. Adjust the thumbnail processors for ``easy_thumbnails`` in your ``settings.py``::
+#. Adjust the thumbnail processors for ``sorl.thumbnail`` in your ``settings.py``::
 
-    from easy_thumbnails.conf import settings as thumbnail_settings
-    THUMBNAIL_PROCESSORS = (
-        'image_cropping.thumbnail_processors.crop_corners',
-    ) + thumbnail_settings.THUMBNAIL_PROCESSORS
+THUMBNAIL_ENGINE = 'image_cropping.thumbnail_engine.CropEngine'
 
 #. Deploy the necessary static files. If you are using Django 1.3 and ``contrib.staticfiles`` the 
    necessary static files should be picked up automatically. In all other cases you have to copy or
